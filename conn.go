@@ -155,7 +155,7 @@ func (p *conn) handshake(props []interface{}) error {
 		p.sendGreeting,
 		p.recvGreeting,
 		p.secu.Handshake,
-		func() error { return p.sendMD(p.sock.GetProtocol(), nil) },
+		func() error { return p.sendMD(p.proto, nil) },
 	} {
 		err := f()
 		if err != nil {
@@ -281,7 +281,7 @@ func (c *conn) recvMD() (map[string]string, error) {
 	}
 
 	peer := strings.ToLower(sysMetadata["socket-type"])
-	if proto := c.sock.GetProtocol(); proto.PeerName() != peer {
+	if c.proto.PeerName() != peer {
 		return nil, mangos.ErrBadProto
 	}
 
