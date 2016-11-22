@@ -123,13 +123,16 @@ type metaData struct {
 
 func (md metaData) Read(data []byte) (n int, err error) {
 	klen := len(md.k)
+	vlen := len(md.v)
+	size := 1 + klen + 4 + vlen
+	_ = data[:size] // help with bound check elision
+
 	data[n] = byte(klen)
 	n++
 	n += copy(data[n:n+klen], md.k)
-	vlen := len(md.v)
 	binary.BigEndian.PutUint32(data[n:n+4], uint32(vlen))
 	n += 4
-	n += copy(data[n:], md.v)
+	n += copy(data[n:n+vlen], md.v)
 	return n, io.EOF
 }
 
