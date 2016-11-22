@@ -16,15 +16,12 @@ package zmq
 
 import (
 	"bytes"
-	"encoding/binary"
 	"errors"
 )
 
 var (
 	errBoolCnv = errors.New("zmq: invalid byte to bool conversion")
 )
-
-var byteOrder = binary.BigEndian
 
 func asString(slice []byte) string {
 	i := bytes.IndexByte(slice, 0)

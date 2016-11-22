@@ -62,7 +62,7 @@ type greeting struct {
 }
 
 func (g *greeting) read(r io.Reader) error {
-	err := binary.Read(r, byteOrder, g)
+	err := binary.Read(r, binary.BigEndian, g)
 	if err != nil {
 		return err
 	}
@@ -127,7 +127,7 @@ func (md metaData) Read(data []byte) (n int, err error) {
 	n++
 	n += copy(data[n:n+klen], md.k)
 	vlen := len(md.v)
-	byteOrder.PutUint32(data[n:n+4], uint32(vlen))
+	binary.BigEndian.PutUint32(data[n:n+4], uint32(vlen))
 	n += 4
 	n += copy(data[n:], md.v)
 	return n, io.EOF
@@ -143,7 +143,7 @@ func (md *metaData) Write(data []byte) (n int, err error) {
 	md.k = strings.ToLower(string(data[n : n+klen]))
 	n += klen
 
-	v := byteOrder.Uint32(data[n : n+4])
+	v := binary.BigEndian.Uint32(data[n : n+4])
 	n += 4
 	if uint64(v) > uint64(maxInt) {
 		return n, errOverflow

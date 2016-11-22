@@ -190,7 +190,7 @@ func (c *conn) sendGreeting() error {
 	}
 	copy(g.Mechanism[:], kind)
 
-	return binary.Write(c.c, byteOrder, &g)
+	return binary.Write(c.c, binary.BigEndian, &g)
 }
 
 func (c *conn) recvGreeting() error {
@@ -331,11 +331,11 @@ func (c *conn) send(isCommand bool, body []byte) error {
 	}
 
 	if isLong {
-		if err := binary.Write(c.c, byteOrder, int64(size)); err != nil {
+		if err := binary.Write(c.c, binary.BigEndian, int64(size)); err != nil {
 			return err
 		}
 	} else {
-		if err := binary.Write(c.c, byteOrder, uint8(size)); err != nil {
+		if err := binary.Write(c.c, binary.BigEndian, uint8(size)); err != nil {
 			return err
 		}
 	}
@@ -378,7 +378,7 @@ func (c *conn) read() (bool, []byte, error) {
 			return false, nil, err
 		}
 
-		size = byteOrder.Uint64(longHeader[:])
+		size = binary.BigEndian.Uint64(longHeader[:])
 	}
 
 	if size > uint64(maxInt64) {
